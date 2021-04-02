@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { Person } from '../interfaces/person';
+import { DataService } from '../data.service';
 
 @Component({
   selector: 'app-home',
@@ -8,20 +9,24 @@ import { HttpClient } from '@angular/common/http';
 })
 export class HomePage implements OnInit {
 
-  public people: any[] = []; 
+  public people: any = []; 
   public cachedPeople: any[] = [];
   
   public searchTerm: string = "";
 
-  constructor(private httpClient: HttpClient) {}
+  constructor(private data: DataService) {}
 
   ngOnInit() {
-    this.httpClient.get('https://swapi.dev/api/people/').subscribe((apiData: any) => {
+    this.getPeople();
+  }
+
+  getPeople() {
+    this.data.getPeople().subscribe((apiData: any) => {
       console.log("PEOPLESZ!!", apiData);
       
       // loop through all of the items returned and use their index in the array 
       // as their ID field to be used with the /details/:id route
-      const peopleWithIds = apiData.results.map( (person: any, index: number) => {
+      const peopleWithIds = apiData.results.map( (person: Person, index: number) => {
         person.id = index + 1
         return person
       })
@@ -29,10 +34,9 @@ export class HomePage implements OnInit {
       console.log("People with Ids", peopleWithIds);
 
       this.people = peopleWithIds;
-
-      console.log(this.people)
     })
 
+    console.log('got people?', this.people);
   }
 
   searchForAPerson() {

@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { HttpClient } from '@angular/common/http';
+import { DataService } from '../data.service';
+import { Person } from '../interfaces/person';
 
 @Component({
   selector: 'app-details',
@@ -9,7 +10,9 @@ import { HttpClient } from '@angular/common/http';
 })
 export class DetailsPage implements OnInit {
 
-  constructor(private route: ActivatedRoute, private httpClient: HttpClient) { }
+  public personDetail: Person;
+
+  constructor(private route: ActivatedRoute, private data: DataService) { }
 
   ngOnInit() {
     this.getStarWarsDetails();
@@ -18,9 +21,19 @@ export class DetailsPage implements OnInit {
   getStarWarsDetails() {
     const starWarsId = +this.route.snapshot.paramMap.get('id');
   
-    this.httpClient.get(`https://swapi.dev/api/people/${starWarsId}`).subscribe( (person: any) => {
+    this.data.getPerson(starWarsId).subscribe( (person: any) => {
       console.log('Person!', person)
+      this.personDetail = person;
     })
   }
 
 }
+
+// In class
+// - make a service
+// - MAKE OUR OWN APIS
+
+// Homework will be:
+// - make good lookin' data view
+// - implement service
+// - Make Github pages API
